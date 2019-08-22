@@ -1,0 +1,28 @@
+<!--
+与首页的search.html不太一样的是，这个搜索栏要更简单一些，并且左右分开。
+注： 这里 categories_below_search 中用到的数据将在后续 "其他拦截器" 中讲解
+-->
+<div class="" th:fragment="html">
+    <script>
+        $(function () {
+            //搜索栏显示上一次的搜索keyword
+            $("input[name='keyword']").attr("value", getUrlParms("keyword"));
+        });
+    </script>
+    <a th:href="${application.contextPath}">
+        <img id="simpleLogo" class="simpleLogo" src="img/site/simpleLogo.png">
+    </a>
+    <form action="search" method="get">
+        <div class="simpleSearchDiv pull-right">
+            <input type="text" placeholder="平衡车 原汁机" name="keyword">
+            <button class="searchButton" type="submit">搜天猫</button>
+            <div class="searchBelow">
+                <span th:each="c, status: ${application.categories_below_search}" th:if="${status.index>=7 && status.index<=10}">
+                    <a th:href="@{'category?cid='+${c.id}}" th:text="${c.name}"></a>
+                    <span th:if="${status.index!=10}">|</span>
+                </span>
+            </div>
+        </div>
+    </form>
+    <div style="clear: both"></div>
+</div>

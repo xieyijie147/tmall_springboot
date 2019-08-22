@@ -1,0 +1,28 @@
+<div class="pageDiv" th:fragment="html">
+	<nav>
+	  <ul class="pagination">
+		  <!--被包含的分页html-->
+	    <li :class="{ disabled: pagination.first }">
+			<!--这是首页，当pagination.first为真的时候，就表示当前是首页，那么首页对应的li的class就会使disable，就点击不了-->
+	      <a  href="#nowhere" @click="jump('first')">«</a>
+	    </li>
+
+	    <li :class="{ disabled: !pagination.hasPrevious }">
+	      <a  href="#nowhere" @click="jump('pre')">‹</a>
+	    </li>		    
+		  <!--遍历-->
+		<li  v-for="i in pagination.navigatepageNums">
+			<a href="#nowhere" @click="jumpByNumber(i-1)" >
+				{{i}}
+			</a>
+		</li>
+
+	    <li :class="{ disabled: !pagination.hasNext }">
+	      <a  href="#nowhere" @click="jump('next')">›</a>
+	    </li>
+	    <li :class="{ disabled: pagination.last }">
+	      <a  href="#nowhere" @click="jump('last')">»</a>
+	    </li>		    
+	  </ul>
+	</nav>    
+</div>

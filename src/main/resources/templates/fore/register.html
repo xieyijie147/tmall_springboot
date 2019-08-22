@@ -1,0 +1,19 @@
+<!--
+与首页的home.html相仿，register.html也包含了header.html,top.html,footer.html等公共页面。
+不同的是，没有使用首页的search.html,而是用的简单一点的 simpleSearch.html
+
+中间是注册业务页面registerPage.html
+-->
+
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/fore/header::html"></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html"></div>
+    <div th:replace="include/fore/simpleSearch::html"></div>
+    <div th:replace="include/fore/registerPage::html"></div>
+    <div th:replace="include/fore/footer::html"></div>
+</div>
+</body>
+</html>

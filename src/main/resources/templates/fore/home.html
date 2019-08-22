@@ -1,0 +1,25 @@
+<!--
+根据前台页面的特点，我们把home.html设计成如代码所示。
+1. header.html
+引入标准标签库，js,css，自定义javascript函数等
+2. top.html
+置顶导航
+3. search.html
+搜索栏
+4. homePage.html
+首页业务页面
+5. footer.html
+页脚
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/fore/header::html"></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html"></div>
+    <div th:replace="include/fore/search::html"></div>
+    <div th:replace="include/fore/home/homepage::html"></div>
+    <div th:replace="include/fore/footer::html"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!--
+在上一步确认访问按钮提交数据到/payed, 返回payed.html
+与 register.html 相仿，payed.html也包含了header.html, top.html, simpleSearch.html， footer.html 等公共页面。
+中间是支付成功业务页面 payedPage.html
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/fore/header::html"></head>
+<body>
+<div id="workingArea">
+    <div th:replace="include/fore/top::html"></div>
+    <div th:replace="include/fore/simpleSearch::html"></div>
+    <div th:replace="include/fore/cart/payedPage::html"></div>
+    <div th:replace="include/fore/footer::html"></div>
+</div>
+</body>
+</html>

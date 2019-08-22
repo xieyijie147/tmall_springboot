@@ -1,0 +1,99 @@
+<!--排序条-->
+<!--
+sortBar.html 即排序条，做了如下几个与数据相关的事情
+1. 根据sort参数判断哪个排序按钮高亮
+		<td :class="{'grayColumn':(sort==null||sort=='all')}"><a :href="'?cid='+c.id+'&sort=all'">综合<span class="glyphicon glyphicon-arrow-down"></span></a></td>
+		<td :class="{'grayColumn':(sort==null||sort=='review')}"><a :href="'?cid='+c.id+'&sort=review'">人气<span class="glyphicon glyphicon-arrow-down"></span></a></td>
+		<td :class="{'grayColumn':(sort==null||sort=='date')}"><a :href="'?cid='+c.id+'&sort=date'">新品<span class="glyphicon glyphicon-arrow-down"></span></a></td>
+		<td :class="{'grayColumn':(sort==null||sort=='saleCount')}"><a :href="'?cid='+c.id+'&sort=saleCount'">销量<span class="glyphicon glyphicon-arrow-down"></span></a></td>
+		<td :class="{'grayColumn':(sort==null||sort=='price')}"><a :href="'?cid='+c.id+'&sort=price'">价格<span class="glyphicon glyphicon-resize-vertical"></span></a></td>
+2. 每个排序按钮提交到本页面，即/forecategory，并带上参数sort
+
+这里有部分js代码，其作用是根据输入的最小最大价格数字进行产品筛选。
+-->
+
+<div th:fragment="html">
+    <script>
+        $(function () {
+           $("input.sortBarPrice").keyup(function () {
+              var num = $(this).val();
+              if(num.length == 0){
+                  $("div.productUnit").show();
+                  return;
+              }
+              num = parseInt(num);
+              if(isNaN(num)){
+                  num = "";
+              }
+              $(this).val(num);
+
+              var begin = $("input.beginPrice").val();
+              var end = $("input.endPrice").val();
+              if(end == "") {
+                  end = "999999";
+              }
+              if(!isNaN(begin) && !isNaN(end)){
+                  $("div.productUnit").hide();
+                  $("div.productUnit").each(function () {
+                      var price = $(this).attr("price");
+                      price = new Number(price);
+                      if(price <= end && price >= begin){
+                          $(this).show();
+                      }
+                  });
+              }
+           });
+           $("#sortByPriceUpOrDown").click(function () {
+               var url;
+               var cid = getUrlParms("cid");
+               if(getUrlParms("sort") == "price"){
+                   url = "?cid="+cid+"&sort=price2";
+               }
+               else{
+                   url = "?cid="+cid+"&sort=price";
+               }
+               this.href = url;
+           })
+        });
+    </script>
+
+    <div class="categorySortBar">
+        <table class="categorySortBarTable categorySortTable">
+            <tr>
+                <td :class="{'grayColumn':(sort==null||sort=='all')}">
+                    <a :href="'?cid='+c.id+'&sort=all'">
+                        综合<span class="glyphicon glyphicon-arrow-down"></span>
+                    </a>
+                </td>
+                <td :class="{'grayColumn':(sort==null||sort=='review')}">
+                    <a :href="'?cid='+c.id+'&sort=review'">
+                        人气<span class="glyphicon glyphicon-arrow-down"></span>
+                    </a>
+                </td>
+                <td :class="{'grayColumn':(sort==null||sort=='date')}">
+                    <a :href="'?cid='+c.id+'&sort=date'">
+                        新品<span class="glyphicon glyphicon-arrow-down"></span>
+                    </a>
+                </td>
+                <td :class="{'grayColumn':(sort==null||sort=='saleCount')}">
+                    <a :href="'?cid='+c.id+'&sort=saleCount'">
+                        销量<span class="glyphicon glyphicon-arrow-down"></span>
+                    </a>
+                </td>
+                <td :class="{'grayColumn':(sort==null||sort=='price'||sort=='price2')}">
+                    <a id="sortByPriceUpOrDown" href="" isUp="true">
+                        价格<span class="glyphicon glyphicon-resize-vertical"></span>
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+        <table class="categorySortBarTable">
+            <tr>
+                <td><input class="sortBarPrice beginPrice" type="text" placeholder="请输入"></td>
+                <td class="grayColumn priceMiddleColumn"></td>
+                <td><input class="sortBarPrice endPrice" type="text" placeholder="请输入"></td>
+            </tr>
+        </table>
+    </div>
+</div>
