@@ -5,11 +5,15 @@ import com.tmall.pojo.OrderItem;
 import com.tmall.pojo.Product;
 import com.tmall.pojo.ProductImage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames="productImages")
 public class ProductImageService {
     //提供两个常量，分别表示单个图片和详情图片
     public static final String type_single = "single";
@@ -18,22 +22,27 @@ public class ProductImageService {
     @Autowired ProductImageDAO productImageDAO;
     @Autowired ProductService productService;
 
+    @CacheEvict(allEntries=true)
     public void add(ProductImage bean){
         productImageDAO.save(bean);
     }
 
+    @CacheEvict(allEntries=true)
     public void delete(int id){
         productImageDAO.delete(id);
     }
 
+    @Cacheable(key="'productImages-one-'+ #p0")
     public ProductImage get(int id){
         return productImageDAO.findOne(id);
     }
 
     //提供了根据产品id和图片类型查询的list方法
+    @Cacheable(key="'productImages-single-pid-'+ #p0.id")
     public List<ProductImage> listSingleProductImages(Product product){
         return productImageDAO.findByProductAndTypeOrderByIdDesc(product, type_single);
     }
+    @Cacheable(key="'productImages-single-pid-'+ #p0.id")
     public List<ProductImage> listDetailProductImages(Product product){
         return productImageDAO.findByProductAndTypeOrderByIdDesc(product, type_detail);
     }

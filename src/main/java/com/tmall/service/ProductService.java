@@ -4,7 +4,11 @@ import com.tmall.dao.ProductDAO;
 import com.tmall.pojo.Category;
 import com.tmall.pojo.Product;
 import com.tmall.util.Page4Navigator;
+import com.tmall.util.SpringContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "products")
 public class ProductService {
     @Autowired ProductDAO productDAO;
     @Autowired CategoryService categoryService;
@@ -22,22 +27,27 @@ public class ProductService {
     @Autowired OrderItemService orderItemService;
     @Autowired ReviewService reviewService;
 
+    @CacheEvict(allEntries=true)
     public void add(Product bean){
         productDAO.save(bean);
     }
 
+    @CacheEvict(allEntries=true)
     public void delete(int id){
         productDAO.delete(id);
     }
 
+    @Cacheable(key="'products-one-'+ #p0")
     public Product get(int id){
         return productDAO.findOne(id);
     }
 
+    @CacheEvict(allEntries=true)
     public void update(Product bean){
         productDAO.save(bean);
     }
 
+    @Cacheable(key="'products-cid-'+#p0+'-page-'+#p1 + '-' + #p2 ")
     public Page4Navigator<Product> list(int cid, int start, int size, int navigetePages){
         Category category = categoryService.get(cid);
 
@@ -51,7 +61,8 @@ public class ProductService {
 
     //1. 为分类填充产品集合
     public void fill(Category category){
-        List<Product> products = listByCategory(category);
+        ProductService productService = SpringContextUtil.getBean(ProductService.class);
+        List<Product> products = productService.listByCategory(category);
         productImageService.setFirstProductImages(products);
         category.setProducts(products);
     }
@@ -80,7 +91,8 @@ public class ProductService {
     }
 
     //4. 查询某个分类下的所有产品
-    private List<Product> listByCategory(Category category) {
+    @Cacheable(key="'products-cid-'+ #p0.id")
+    public List<Product> listByCategory(Category category) {
         return productDAO.findByCategoryOrderById(category);
     }
 

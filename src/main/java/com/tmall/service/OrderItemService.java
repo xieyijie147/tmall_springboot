@@ -7,6 +7,9 @@ import com.tmall.pojo.OrderItem;
 import com.tmall.pojo.Product;
 import com.tmall.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +20,7 @@ import java.util.List;
 * 除此之外，还计算订单总数，总金额等等信息。
 * */
 @Service
+@CacheConfig(cacheNames = "orderItems")
 public class OrderItemService {
     @Autowired OrderItemDAO orderItemDAO;
     @Autowired ProductImageService productImageService;
@@ -41,18 +45,22 @@ public class OrderItemService {
         order.setOrderItems(orderItems);
     }
 
+    @CacheEvict(allEntries=true)
     public void update(OrderItem orderItem){
         orderItemDAO.save(orderItem);
     }
 
+    @CacheEvict(allEntries=true)
     public void add(OrderItem orderItem){
         orderItemDAO.save(orderItem);
     }
 
+    @Cacheable(key="'orderItems-one-'+ #p0")
     public OrderItem get(int id){
         return orderItemDAO.findOne(id);
     }
 
+    @CacheEvict(allEntries=true)
     public void delete(int id){
         orderItemDAO.delete(id);
     }
@@ -70,14 +78,17 @@ public class OrderItemService {
         return result;
     }
 
+    @Cacheable(key="'orderItems-uid-'+ #p0.id")
     public List<OrderItem> listByProduct(Product product){
         return orderItemDAO.findByProduct(product);
     }
 
+    @Cacheable(key="'orderItems-uid-'+ #p0.id")
     public List<OrderItem> listByOrder(Order order) {
         return orderItemDAO.findByOrderOrderByIdDesc(order);
     }
 
+    @Cacheable(key="'orderItems-uid-'+ #p0.id")
     public List<OrderItem> listByUser(User user){
         return orderItemDAO.findByUserAndOrderIsNull(user);
     }
